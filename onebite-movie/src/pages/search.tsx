@@ -1,7 +1,7 @@
-import SearchableLayout from "./components/searchable-layout";
+import SearchableLayout from "@/components/searchable-layout";
 import { useRouter } from "next/router";
 import { ReactNode } from "react";
-import MovieItem from "./components/movie-item";
+import MovieItem from "@/components/movie-item";
 import style from "./search.module.css";
 import movies from "@/dummy.json";
 
