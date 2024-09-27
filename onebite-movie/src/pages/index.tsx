@@ -1,5 +1,5 @@
-import MovieItem from "./components/movie-item";
-import SearchableLayout from "./components/searchable-layout";
+import MovieItem from "@/components/movie-item";
+import SearchableLayout from "@/components/searchable-layout";
 import { InferGetStaticPropsType } from "next";
 import { ReactNode } from "react";
 import style from "./index.module.css";
