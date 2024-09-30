@@ -1,5 +1,5 @@
 // type 불러오기
-import type { BookData } from "../types";
+import type { BookData } from "../../types";
 import Link from "next/link";
 import style from "./book-item.module.css";
 

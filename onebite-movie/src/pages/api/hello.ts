@@ -9,6 +9,5 @@ export default function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
-  res.status(200).json({ name: "John Doe" });
-  // 상태코드 200 정상적으로 처리 되었음을 의미
+  res.status(200).json({ name: "John Doe" }); // 상태코드 200 정상적으로 처리 되었음을 의미
 }
