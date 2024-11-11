@@ -4,7 +4,7 @@ import style from "./index.module.css";
 import { ReactNode, useEffect } from "react";
 // import books from "@/mock/book.json";
 import BookItem from "./component/book-item";
-import { InferGetServerSidePropsType, InferGetStaticPropsType } from "next";
+import { InferGetStaticPropsType } from "next";
 import fetchBooks from "@/lib/fetch-boots";
 import fetchRandomBooks from "@/lib/fecth-random.books";
 
