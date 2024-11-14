@@ -1,12 +1,12 @@
-// CSS Module
 import SearchableLayout from "./component/searchable-layout";
 import style from "./index.module.css";
-import { ReactNode, useEffect } from "react";
-// import books from "@/mock/book.json";
+import { ReactNode } from "react";
 import BookItem from "./component/book-item";
 import { InferGetStaticPropsType } from "next";
 import fetchBooks from "@/lib/fetch-boots";
 import fetchRandomBooks from "@/lib/fecth-random.books";
+// 메타태그 추가를 위한 임포트
+import Head from "next/head";
 
 // getServerSideProps 약속된 메서드를 추가하면 해당 패이지는 ssr로 실행됨
 // 딱 한번만 서버측에서 실행됨
@@ -21,6 +21,7 @@ export const getStaticProps = async () => {
   ]);
   return {
     props: { allBooks, recoBooks },
+    // revalidate: 3, // 데이터 검증의 유통기한
   };
 };
 
@@ -31,25 +32,33 @@ export default function Home({
   allBooks,
   recoBooks,
 }: InferGetStaticPropsType<typeof getStaticProps>) {
-  console.log(allBooks);
-  useEffect(() => {
-    console.log(window);
-  });
   return (
-    <div className={style.container}>
-      <section>
-        <h3>지금 추천하는 도서</h3>
-        {recoBooks.map((book) => (
-          <BookItem key={book.id} {...book} />
-        ))}
-      </section>
-      <section>
-        <h3>등록된 모든 도서</h3>
-        {allBooks.map((book) => (
-          <BookItem key={book.id} {...book} />
-        ))}
-      </section>
-    </div>
+    <>
+      {/* 메타태그를 불러오기 위한 태그 - 각 페이지에 추가 가능 */}
+      <Head>
+        <title>한입북스</title>
+        <meta property="og:image" content="/thumbnail.png" />
+        <meta property="og:title" content="한입북스" />
+        <meta
+          property="og:description"
+          content="한입 북스에 등록된 도서들을 만나보세요"
+        />
+      </Head>
+      <div className={style.container}>
+        <section>
+          <h3>지금 추천하는 도서</h3>
+          {recoBooks.map((book) => (
+            <BookItem key={book.id} {...book} />
+          ))}
+        </section>
+        <section>
+          <h3>등록된 모든 도서</h3>
+          {allBooks.map((book) => (
+            <BookItem key={book.id} {...book} />
+          ))}
+        </section>
+      </div>
+    </>
   );
 }
 

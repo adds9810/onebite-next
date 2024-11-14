@@ -1,6 +1,8 @@
-import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
+import { GetStaticPropsContext, InferGetStaticPropsType } from "next";
 import style from "./[id].module.css";
 import fetchOneBok from "@/lib/fecth-one-book";
+import Head from "next/head";
+import { useRouter } from "next/router";
 
 // 임시 데이터 사용
 // const mockData = {
@@ -15,18 +17,56 @@ import fetchOneBok from "@/lib/fecth-one-book";
 //     "https://shopping-phinf.pstatic.net/main_3888828/38888282618.20230913071643.jpg",
 // };
 
-export const getServerSideProps = async (
-  context: GetServerSidePropsContext
-) => {
+export const getStaticPaths = () => {
+  // params의 값은 반드시 문자열이어여만 인식
+  return {
+    paths: [
+      { params: { id: "1" } },
+      { params: { id: "2" } },
+      { params: { id: "3" } },
+    ],
+    fallback: false,
+    // fallback : 페이지의 컴포넌트가 아직 서버로부터 데이터를 전달받지 못한 상태
+    // 빌드 타임에 생성해놓지 않은 path로 요청이 들어온 경우 어떻게 할지에 대한 설정,
+    // false 404 not found
+    // true ssr 방식 + 데이터가 없는 폴백 상티의 페이지부터 반환
+    // 'blocking' ssr 방식
+  };
+};
+
+export const getStaticProps = async (context: GetStaticPropsContext) => {
   // params! -> 값이 있을거라고 단언
   const id = context.params!.id;
   const book = await fetchOneBok(Number(id));
+
+  // 데이터가 없을 경우 404페이지로 이동시켜줌
+  if (!book) {
+    return { notFound: true };
+  }
   return { props: { book } };
 };
 
 export default function Page({
   book,
-}: InferGetServerSidePropsType<typeof getServerSideProps>) {
+}: InferGetStaticPropsType<typeof getStaticProps>) {
+  const router = useRouter();
+
+  if (router.isFallback) {
+    return (
+      <>
+        <Head>
+          <title>한입북스</title>
+          <meta property="og:image" content="/thumbnail.png" />
+          <meta property="og:title" content="한입북스" />
+          <meta
+            property="og:description"
+            content="한입 북스에 등록된 도서들을 만나보세요"
+          />
+        </Head>
+        <div>로딩중입니다</div>
+      </>
+    );
+  } // isFallback 상태일때 나타나는 문구
   if (!book) return "문제가 발생했습니다. 다시 시도해주세요";
   const {
     // id,
@@ -39,19 +79,27 @@ export default function Page({
   } = book;
 
   return (
-    <div className={style.container}>
-      <div
-        className={style.cover_img_container}
-        style={{ backgroundImage: `url('${coverImgUrl}')` }}
-      >
-        <img src={coverImgUrl} />
+    <>
+      <Head>
+        <title>{title}</title>
+        <meta property="og:image" content={coverImgUrl} />
+        <meta property="og:title" content={title} />
+        <meta property="og:description" content={description} />
+      </Head>
+      <div className={style.container}>
+        <div
+          className={style.cover_img_container}
+          style={{ backgroundImage: `url('${coverImgUrl}')` }}
+        >
+          <img src={coverImgUrl} />
+        </div>
+        <div className={style.title}>{title}</div>
+        <div className={style.subTitle}>{subTitle}</div>
+        <div className={style.author}>
+          {author} | {publisher}
+        </div>
+        <div className={style.description}>{description}</div>
       </div>
-      <div className={style.title}>{title}</div>
-      <div className={style.subTitle}>{subTitle}</div>
-      <div className={style.author}>
-        {author} | {publisher}
-      </div>
-      <div className={style.description}>{description}</div>
-    </div>
+    </>
   );
 }
